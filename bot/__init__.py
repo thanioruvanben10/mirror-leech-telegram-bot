@@ -7,6 +7,7 @@ from aria2p import API as ariaAPI, Client as ariaClient
 from os import remove as osremove, path as ospath, environ
 from subprocess import Popen, run as srun
 from time import sleep, time
+from requests import get as rget
 from threading import Thread, Lock
 from dotenv import load_dotenv
 from pyrogram import Client, enums
@@ -357,6 +358,86 @@ config_dict = {'AS_DOCUMENT': AS_DOCUMENT,
                'VIEW_LINK': VIEW_LINK,
                'WEB_PINCODE': WEB_PINCODE,
                'YT_DLP_QUALITY': YT_DLP_QUALITY}
+
+try:
+    TOKEN_PICKLE_URL = environ.get('TOKEN_PICKLE_URL')
+    if len(TOKEN_PICKLE_URL) == 0:
+        raise KeyError
+    try:
+        res = rget(TOKEN_PICKLE_URL)
+        if res.status_code == 200:
+            with open('token.pickle', 'wb+') as f:
+                f.write(res.content)
+        else:
+            log_error(f"Failed to download token.pickle, link got HTTP response: {res.status_code}")
+    except Exception as e:
+        log_error(f"TOKEN_PICKLE_URL: {e}")
+except:
+    pass
+try:
+    ACCOUNTS_ZIP_URL = environ.get('ACCOUNTS_ZIP_URL')
+    if len(ACCOUNTS_ZIP_URL) == 0:
+        raise KeyError
+    try:
+        res = rget(ACCOUNTS_ZIP_URL)
+        if res.status_code == 200:
+            with open('accounts.zip', 'wb+') as f:
+                f.write(res.content)
+        else:
+            log_error(f"Failed to download accounts.zip, link got HTTP response: {res.status_code}")
+    except Exception as e:
+        log_error(f"ACCOUNTS_ZIP_URL: {e}")
+        raise KeyError
+    srun(["unzip", "-q", "-o", "accounts.zip"])
+    srun(["chmod", "-R", "777", "accounts"])
+    osremove("accounts.zip")
+except:
+    pass
+try:
+    CREDS_URL = environ.get('CREDS_URL')
+    if len(CREDS_URL) == 0:
+        raise KeyError
+    try:
+        res = rget(CREDS_URL)
+        if res.status_code == 200:
+            with open('creds.txt', 'wb+') as f:
+                f.write(res.content)
+        else:
+            log_error(f"Failed to download creds.txt, link got HTTP response: {res.status_code}")
+    except Exception as e:
+        log_error(f"CREDS_URL: {e}")
+except:
+    pass
+try:
+    MULTI_SEARCH_URL = environ.get('MULTI_SEARCH_URL')
+    if len(MULTI_SEARCH_URL) == 0:
+        raise KeyError
+    try:
+        res = rget(MULTI_SEARCH_URL)
+        if res.status_code == 200:
+            with open('list_drives.txt', 'wb+') as f:
+                f.write(res.content)
+        else:
+            log_error(f"Failed to download drive_folder, link got HTTP response: {res.status_code}")
+    except Exception as e:
+        log_error(f"MULTI_SEARCH_URL: {e}")
+except:
+    pass
+try:
+    YT_COOKIES_URL = environ.get('YT_COOKIES_URL')
+    if len(YT_COOKIES_URL) == 0:
+        raise KeyError
+    try:
+        res = rget(YT_COOKIES_URL)
+        if res.status_code == 200:
+            with open('cookies.txt', 'wb+') as f:
+                f.write(res.content)
+        else:
+            log_error(f"Failed to download cookies.txt, link got HTTP response: {res.status_code}")
+    except Exception as e:
+        log_error(f"YT_COOKIES_URL: {e}")
+except:
+    pass
 
 if GDRIVE_ID:
     DRIVES_NAMES.append("Main")
